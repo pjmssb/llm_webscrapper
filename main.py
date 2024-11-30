@@ -1,10 +1,11 @@
 import os
 import dotenv
-import time
 import anthropic
 import nest_asyncio
-from bs4 import BeautifulSoup
-
+from lxml import etree
+from io import StringIO
+import asyncio
+from playwright.async_api import async_playwright
 
 nest_asyncio.apply()
 dotenv.load_dotenv()
@@ -20,24 +21,16 @@ url = 'https://miasmoda.cl/collections/all?filter.v.option.color=Negro&filter.v.
 página_web = AsyncChromiumLoader([url])
 documento = página_web.load()
 
-# Transform the loaded HTML using BeautifulSoupTransformer
-bs_transformer = BeautifulSoupTransformer()
-docs_transformed = bs_transformer.transform_documents(
-    documento, tags_to_extract=["h3", "p"]
-)
-
 cliente_llm = anthropic.Anthropic(api_key=LLM_API_KEY)
 MODELO_LLM = "claude-3-sonnet-20240229"
 ROL = "clothes buyer, 25 years old, married, female"
 LIMITE_TOKENS = 1024
 
 respuesta_llm = cliente_llm.messages.create(
-  model = MODELO_LLM,
-  max_tokens = LIMITE_TOKENS,
-  messages = [
+    model=MODELO_LLM, max_tokens=LIMITE_TOKENS,messages=[
     {
       "role": ROL,
-      "content": f"Quiero que me hagas un resumen de la página {url}"
+      "content": f"Selecciona los bodys más economicos en esta página {documento}"
     }
   ]
 )
