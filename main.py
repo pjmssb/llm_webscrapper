@@ -3,6 +3,8 @@ import dotenv
 import time
 import anthropic
 import nest_asyncio
+from bs4 import BeautifulSoup
+
 
 nest_asyncio.apply()
 dotenv.load_dotenv()
@@ -23,9 +25,6 @@ bs_transformer = BeautifulSoupTransformer()
 docs_transformed = bs_transformer.transform_documents(
     documento, tags_to_extract=["h3", "p"]
 )
-
-
-
 
 cliente_llm = anthropic.Anthropic(api_key=LLM_API_KEY)
 MODELO_LLM = "claude-3-sonnet-20240229"
